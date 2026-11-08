@@ -41,18 +41,41 @@ export function StoryScroll() {
         const q = gsap.utils.selector(el);
         const tl = gsap.timeline({
           defaults: { ease: "power2.inOut" },
-          scrollTrigger: { trigger: el, start: "top top", end: "bottom bottom", scrub: reduce ? true : 0.8 },
+          scrollTrigger: { trigger: el, start: "top top", end: "bottom bottom", scrub: reduce ? true : 0.8, invalidateOnRefresh: true },
         });
         const T = (v: number) => (reduce ? 0 : v); // transforms disabled for reduced motion
+
+        // The navbar logo + header backdrop appear only once the hero wordmark has landed on them.
+        const logo = document.getElementById("nav-logo");
+        const giant = q(".s1 .giant")[0] as HTMLElement | undefined;
+        const stage = el.firstElementChild as HTMLElement;
+        const textRect = (node: Node) => {
+          const r = document.createRange();
+          r.selectNodeContents(node);
+          return r.getBoundingClientRect();
+        };
+        // Where the wordmark must travel (the hero is centred in the pinned stage, which sits at the viewport top).
+        const flight = () => {
+          if (!logo?.firstChild || !giant) return { x: 0, y: 0, scale: 1 };
+          const to = textRect(logo.firstChild); // the "Akora" text node, without the trailing dot
+          return {
+            x: to.left + to.width / 2 - stage.clientWidth / 2,
+            y: to.top + to.height / 2 - stage.clientHeight / 2,
+            scale: to.width / giant.offsetWidth,
+          };
+        };
 
         // initial states
         gsap.set(q(".scene"), { autoAlpha: 0 });
         gsap.set(q(".s1"), { autoAlpha: 1 });
         gsap.set(q(".bg-blush, .bg-wine"), { autoAlpha: 0 });
+        gsap.set("#nav-logo, #site-header-bg", { autoAlpha: 0 });
 
-        // Scene 1 -> 2 : bottle drifts right & tilts, "Akora" slides out
+        // Scene 1 -> 2 : bottle drifts right & tilts, "Akora" flies up into the navbar logo
         tl.to(q(".bottle"), { xPercent: T(55 * m), rotate: T(-12), scale: 0.92, duration: 1 }, 0)
-          .to(q(".s1 .giant"), { xPercent: T(-30), autoAlpha: 0, duration: 1 }, 0)
+          .to(q(".s1 .giant"), { x: () => T(flight().x), y: () => T(flight().y), scale: () => (reduce ? 1 : flight().scale), duration: 0.9, ease: "power3.inOut" }, 0)
+          .to(q(".s1 .giant"), { autoAlpha: 0, duration: 0.15, ease: "none" }, 0.85)
+          .to("#nav-logo, #site-header-bg", { autoAlpha: 1, duration: 0.15, ease: "none" }, 0.85)
           .to(q(".s1 .intro"), { y: T(-60), autoAlpha: 0, duration: 0.6 }, 0)
           .to(q(".s2"), { autoAlpha: 1, duration: 0.4 }, 0.5)
           .fromTo(q(".s2 .marquee"), { xPercent: T(20) }, { xPercent: T(-35), duration: 2, ease: "none" }, 0.4)
@@ -148,7 +171,7 @@ export function StoryScroll() {
           <Image src={tips} alt="French tips and blooming gel floral nails" sizes="13vw"
             className="float-b absolute bottom-[8%] left-[22%] hidden h-auto w-[13vw] max-w-48 rounded-xl object-cover shadow-2xl lg:block" />
           <div className="relative z-20 mx-auto flex h-full max-w-6xl flex-col justify-end pb-[8vh] px-6 sm:justify-center sm:pb-0 sm:items-end">
-            <h2 className="giant overflow-hidden text-[clamp(3.5rem,11vw,10rem)] font-light leading-[0.85] tracking-tight text-wine sm:text-right">
+            <h2 className="giant -mx-[0.1em] -mb-[0.2em] overflow-hidden px-[0.1em] pb-[0.2em] text-[clamp(3.5rem,11vw,10rem)] font-light leading-[0.85] tracking-tight text-wine sm:text-right">
               <span className="inline-block">Length,</span><br />
               <span className="inline-block italic">your way.</span>
             </h2>
@@ -183,8 +206,8 @@ export function StoryScroll() {
         {/* Scene 5 – conclusion */}
         <div className="scene s5 invisible absolute inset-0 flex flex-col items-center justify-end pb-[12vh] text-center opacity-0">
           <h2 className="relative z-20 px-6 text-[clamp(2.75rem,8vw,7.5rem)] font-light leading-[0.95] tracking-tight">
-            <span className="block overflow-hidden"><span className="line block">Your nails,</span></span>
-            <span className="block overflow-hidden"><span className="line block italic text-primary">your story.</span></span>
+            <span className="-mx-[0.1em] -mb-[0.2em] block overflow-hidden px-[0.1em] pb-[0.2em]"><span className="line block">Your nails,</span></span>
+            <span className="-mx-[0.1em] -mb-[0.2em] block overflow-hidden px-[0.1em] pb-[0.2em]"><span className="line block italic text-primary">your story.</span></span>
           </h2>
           <div className="cta relative z-20 mt-8 flex flex-wrap justify-center gap-3 px-6">
             <Button asChild className="h-auto rounded-full px-7 py-3.5 text-sm font-semibold shadow-none transition hover:-translate-y-0.5 hover:bg-primary hover:shadow-lg">
