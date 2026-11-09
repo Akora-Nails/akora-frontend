@@ -58,7 +58,7 @@ export function Book() {
         </div>
         <aside className="h-fit rounded-[2rem] bg-wine p-8 text-wine-foreground lg:sticky lg:top-24">
           <p className="eyebrow text-gold">Your estimate</p>
-          <p key={est.total} className="mt-4 animate-in fade-in slide-in-from-bottom-2 font-display text-6xl font-light">
+          <p key={est.total} className="mt-4 animate-in fade-in slide-in-from-bottom-2 whitespace-nowrap font-display text-5xl font-light sm:text-6xl">
             {formatRs(est.total)}{est.upwards && <span className="text-gold">+</span>}
           </p>
           <p className="mt-4 text-sm opacity-75">

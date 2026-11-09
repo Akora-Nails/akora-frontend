@@ -25,9 +25,9 @@ export function Menu() {
             {services.filter((s) => s.group === g).map((s) => (
               <div key={s.id} className="border-b border-border py-6">
                 <div className="flex items-baseline gap-4">
-                  <h3 className="text-2xl font-normal">{s.name}</h3>
+                  <h3 className="text-xl font-normal sm:text-2xl">{s.name}</h3>
                   <span className="dotted-leader" />
-                  <span className="font-display text-2xl text-primary">{formatRs(s.price)}</span>
+                  <span className="shrink-0 whitespace-nowrap font-display text-xl text-primary sm:text-2xl">{formatRs(s.price)}</span>
                 </div>
                 {s.detail && <p className="mt-2 max-w-md text-muted-foreground">{s.detail}</p>}
               </div>
@@ -46,7 +46,7 @@ export function Menu() {
             <li key={a.id} className="group flex items-baseline gap-3 border-b border-wine-foreground/15 py-4">
               <span className="transition-transform group-hover:translate-x-1">{a.name}</span>
               <span className="flex-1" />
-              <span className="font-display text-gold">{a.price === 0 ? "Complimentary ♡" : `${formatRs(a.price)}${a.upwards ? "+" : ""}`}</span>
+              <span className="shrink-0 whitespace-nowrap font-display text-gold">{a.price === 0 ? "Complimentary ♡" : `${formatRs(a.price)}${a.upwards ? "+" : ""}`}</span>
             </li>
           ))}
         </ul>

@@ -72,7 +72,8 @@ export function StoryScroll() {
         gsap.set("#nav-logo, #site-header-bg", { autoAlpha: 0 });
 
         // Scene 1 -> 2 : bottle drifts right & tilts, "Akora" flies up into the navbar logo
-        tl.to(q(".bottle"), { xPercent: T(55 * m), rotate: T(-12), scale: 0.92, duration: 1 }, 0)
+        // (on phones the bottle shrinks into the gap above the text card instead of sitting behind it)
+        tl.to(q(".bottle"), { xPercent: T(mobile ? 30 : 55 * m), yPercent: T(mobile ? -46 : 0), rotate: T(-12), scale: mobile ? 0.6 : 0.92, duration: 1 }, 0)
           .to(q(".s1 .giant"), { x: () => T(flight().x), y: () => T(flight().y), scale: () => (reduce ? 1 : flight().scale), duration: 0.9, ease: "power3.inOut" }, 0)
           .to(q(".s1 .giant"), { autoAlpha: 0, duration: 0.15, ease: "none" }, 0.85)
           .to("#nav-logo, #site-header-bg", { autoAlpha: 1, duration: 0.15, ease: "none" }, 0.85)
@@ -94,7 +95,8 @@ export function StoryScroll() {
         // Scene 3 -> 4 : wine background, bottle grows to hero, outline "ART"
         tl.to(q(".bg-wine"), { autoAlpha: 1, duration: 0.8 }, 3.7)
           .to(q(".s3"), { autoAlpha: 0, duration: 0.5 }, 3.7)
-          .to(q(".bottle"), { xPercent: 0, yPercent: T(mobile ? -15 : 0), rotate: T(22), scale: desktop ? 1.25 : 1.05, duration: 1.1 }, 3.7)
+          // (on phones the bottle stays small on the right so the "Art" word stays readable)
+          .to(q(".bottle"), { xPercent: T(mobile ? 45 : 0), yPercent: T(mobile ? -30 : 0), rotate: T(22), scale: desktop ? 1.25 : mobile ? 0.55 : 1.05, duration: 1.1 }, 3.7)
           .to(q(".s4"), { autoAlpha: 1, duration: 0.4 }, 4)
           .fromTo(q(".s4 .giant"), { scale: reduce ? 1 : 1.6, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 1 }, 4)
           .from(q(".s4 .word"), { autoAlpha: 0, y: T(30), stagger: 0.08, duration: 0.4 }, 4.3)
@@ -103,7 +105,7 @@ export function StoryScroll() {
         // Scene 4 -> 5 : back to cream, bottle settles upright and releases
         tl.to(q(".bg-wine, .bg-blush"), { autoAlpha: 0, duration: 0.8 }, 5.5)
           .to(q(".s4"), { autoAlpha: 0, duration: 0.5 }, 5.5)
-          .to(q(".bottle"), { rotate: 0, scale: 0.62, yPercent: T(-18), duration: 1 }, 5.5)
+          .to(q(".bottle"), { xPercent: 0, rotate: 0, scale: 0.62, yPercent: T(-18), duration: 1 }, 5.5)
           .to(q(".s5"), { autoAlpha: 1, duration: 0.4 }, 5.8)
           .from(q(".s5 .line"), { yPercent: T(100), stagger: 0.12, duration: 0.6 }, 5.8)
           .from(q(".s5 .cta"), { y: T(30), autoAlpha: 0, duration: 0.4 }, 6.3)
@@ -148,7 +150,7 @@ export function StoryScroll() {
         <div className="scene s2 invisible absolute inset-0 opacity-0">
           <div className="marquee absolute top-[14vh] whitespace-nowrap text-giant text-primary/15">Care · Shape · Shine · Care</div>
           <div className="relative z-20 mx-auto flex h-full max-w-6xl items-end px-6 pb-[10vh] lg:items-center lg:pb-0">
-            <div className="max-w-md rounded-2xl bg-background/85 p-6 backdrop-blur-sm lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
+            <div className="max-w-md rounded-2xl sm:bg-background/85 sm:p-6 sm:backdrop-blur-sm lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
               <p className="eyebrow text-primary">01 — Manicure</p>
               <h2 className="mt-3 text-4xl font-light leading-tight sm:text-5xl">Clean, cared-for hands, <em>always.</em></h2>
               <ul className="mt-6 space-y-3">
@@ -156,7 +158,7 @@ export function StoryScroll() {
                   <li key={s.id} className="item flex items-baseline gap-3">
                     <span className="font-medium">{s.name}</span>
                     <span className="dotted-leader" />
-                    <span className="font-display text-primary">{formatRs(s.price)}</span>
+                    <span className="shrink-0 whitespace-nowrap font-display text-primary">{formatRs(s.price)}</span>
                   </li>
                 ))}
               </ul>
@@ -189,7 +191,7 @@ export function StoryScroll() {
 
         {/* Scene 4 – nail art */}
         <div className="scene s4 invisible absolute inset-0 text-wine-foreground opacity-0">
-          <div className="absolute inset-0 flex items-center justify-center">
+          <div className="absolute inset-0 flex items-center justify-start pl-6 sm:justify-center sm:pl-0">
             <span className="giant outline-text text-giant text-[clamp(8rem,34vw,34rem)] text-gold/70">Art</span>
           </div>
           <Image src={cateye} alt="Burgundy cat eye nails with a marble accent" sizes="15vw"
